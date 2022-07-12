@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	_ "fmt"
 	"github.com/gin-gonic/gin"
 
@@ -12,13 +13,15 @@ const connString = "localhost:8000"
 
 func main() {
 	router := gin.Default()
-	db := repository.ConnectDatabase()  // connect to MongoDB and keep the connection
+	db := repository.ConnectDatabase() // connect to MongoDB and keep the connection
 
-	if db == nil {  // can not connect to the database
+	if db == nil { // can not connect to the database
 		return
 	}
 
 	router = routes.UserRoutes(router, db)
 
-	router.Run(connString)
+	if err := router.Run(connString); err != nil {
+		fmt.Println("Can not run the server...")
+	}
 }

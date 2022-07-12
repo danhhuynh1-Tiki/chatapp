@@ -38,7 +38,7 @@ func (userCtl userController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, responses.ErrorInvalidData(err))
 		return
 	}
-	
+
 	if err := validate.Struct(&user); err != nil {
 		c.JSON(http.StatusBadRequest, responses.ErrorInvalidData(err))
 		return
@@ -51,11 +51,11 @@ func (userCtl userController) Create(c *gin.Context) {
 	}
 
 	newUser := model.User{
-		Email: user.Email,
-		Name: user.Name,
+		Email:    user.Email,
+		Name:     user.Name,
 		Password: hashPassword,
-		Phone: user.Phone,
-		Address: user.Address,
+		Phone:    user.Phone,
+		Address:  user.Address,
 	}
 
 	res, err := userCtl.repo.Create(newUser)
@@ -81,7 +81,7 @@ func (userCtl userController) Login(c *gin.Context) {
 
 	// if client send empty email or password
 	if !(user.Email != "" && user.Password != "") {
-		err := errors.New("unvalid email or password")
+		err := errors.New("invalid email or password")
 		c.JSON(http.StatusBadRequest, responses.ErrorInvalidData(err))
 		return
 	}
@@ -92,8 +92,6 @@ func (userCtl userController) Login(c *gin.Context) {
 		return
 	}
 
-	fmt.Println( existedUser.Password)
-
 	if !utils.CheckPasswordHash(user.Password, existedUser.Password) {
 		err := errors.New("wrong email or password")
 		c.JSON(http.StatusForbidden, responses.ErrorInvalidData(err))
@@ -102,5 +100,3 @@ func (userCtl userController) Login(c *gin.Context) {
 
 	fmt.Println("success")
 }
-
-
