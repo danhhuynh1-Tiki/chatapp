@@ -17,6 +17,32 @@ type userRepository struct {
 func NewRepository(DB *mongo.Database) domain.UserRepository {
 	return &userRepository{DB}
 }
+func (u *userRepository) GetAllUser() []domain.User {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+
+	// defer DB.Disconnect(ctx)
+
+	// example := DB.Database("example")
+
+	userc := u.DB.Collection("users")
+
+	cursor, err := userc.Find(ctx, bson.M{})
+
+	defer cursor.Close(ctx)
+
+	alluser := []domain.User{}
+	for cursor.Next(ctx) {
+		var user domain.User
+		cursor.Decode(&user)
+
+		alluser = append(alluser, user)
+	}
+	if err != nil {
+		return nil
+	} else {
+		return alluser
+	}
+}
 func (u *userRepository) GetUser(user domain.User) (*domain.User, error) {
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)

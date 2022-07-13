@@ -2,14 +2,14 @@ package controllers
 
 import (
 	"chat/domain"
-	"time"
 
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-
+	jwt "chat/jwt"
 	responses "chat/responses"
+
+	// "github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
@@ -33,20 +33,8 @@ func (userCtl UserController) Create(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, responses.ErrorInvalidData(err))
 		return
 	}
-	expirationTime := time.Now().Add(5 * time.Minute)
-
-	claims := &domain.Claims{
-		ID:    user.ID.String(),
-		Email: user.Email,
-		StandardClaims: jwt.StandardClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// Create the JWT string
-	tokenString, err := token.SignedString(domain.JwtKey)
+	// get token string
+	tokenString, expirationTime, err := jwt.Encode(user)
 	// set cookie for jwt
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:    "token",

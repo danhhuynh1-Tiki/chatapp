@@ -21,9 +21,11 @@ type UserRepository interface {
 	Create(user User) (*string, error) // used to create a new user
 	// IsExisted(email string) (*User, error) // used to check if the user is existed
 	GetUser(user User) (*User, error)
+	GetAllUser() []User
 }
 type UserUsecase interface {
 	Create(user User) (*string, error)
 	// IsExisted(email string) (*User, error)
 	GetUser(user User)
+	GetAllUser() []User
 }

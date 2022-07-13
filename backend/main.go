@@ -2,7 +2,10 @@ package main
 
 import (
 	"chat/database"
+	// user
+	userHandler "chat/user/delivery/http"
 	userRepository "chat/user/repository"
+	userUsecase "chat/user/usecase"
 
 	// Login
 	loginHandler "chat/login/delivery/http"
@@ -26,7 +29,8 @@ func useRoutes() *gin.Engine {
 	DB := database.GetDatabase()
 	// user
 	userRepo := userRepository.NewRepository(DB)
-
+	userUsecase := userUsecase.NewUserUsecase(userRepo)
+	userHandler.NewUserHandler(r, userUsecase)
 	// login
 	loginUsecase := loginUsecase.NewLoginUsecase(userRepo)
 	loginHandler.NewLoginHandler(r, loginUsecase)

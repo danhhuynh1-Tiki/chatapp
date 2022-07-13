@@ -2,10 +2,9 @@ package http
 
 import (
 	"chat/domain"
+	"chat/jwt"
 	"net/http"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,20 +43,7 @@ func (login *LoginHanlder) CreateJwtUser(c *gin.Context) {
 		})
 		return
 	}
-	expirationTime := time.Now().Add(5 * time.Minute)
-
-	claims := &domain.Claims{
-		ID:    res.ID.String(),
-		Email: res.Email,
-		StandardClaims: jwt.StandardClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// Create the JWT string
-	tokenString, err := token.SignedString(domain.JwtKey)
+	tokenString, expirationTime, err := jwt.Encode(user)
 	// set cookie for jwt
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:    "token",
