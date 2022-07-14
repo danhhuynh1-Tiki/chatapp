@@ -3,6 +3,7 @@ package http
 import (
 	"chat/domain"
 	"chat/jwt"
+	"chat/responses"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,7 @@ type LoginHanlder struct {
 // 	jwt.StandardClaims
 // }
 
-func NewLoginHandler(r *gin.Engine, login domain.LoginUsecase) {
+func NewLoginHandler(r *gin.RouterGroup, login domain.LoginUsecase) {
 	handler := LoginHanlder{login}
 
 	r.GET("/login", handler.CreateJwtUser)
@@ -37,13 +38,11 @@ func (login *LoginHanlder) CreateJwtUser(c *gin.Context) {
 	}
 	res, err := login.loginUse.GetUser(user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  http.StatusBadRequest,
-			"message": "user is not exists",
-		})
+		c.JSON(http.StatusBadRequest, responses.ErrorNotFound(err))
 		return
 	}
-	tokenString, expirationTime, err := jwt.Encode(user)
+	tokenString, expirationTime, err := jwt.Encode(*res)
+
 	// set cookie for jwt
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:    "token",

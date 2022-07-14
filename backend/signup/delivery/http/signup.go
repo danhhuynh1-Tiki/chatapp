@@ -1,4 +1,4 @@
-package controllers
+package http
 
 import (
 	"chat/domain"
@@ -16,7 +16,7 @@ type UserController struct {
 	userUsecase domain.SingupUsecase
 }
 
-func NewSignupHandler(r *gin.Engine, userUsecase domain.SingupUsecase) {
+func NewSignupHandler(r *gin.RouterGroup, userUsecase domain.SingupUsecase) {
 	userHandler := &UserController{userUsecase}
 	r.POST("/signup", userHandler.Create)
 }

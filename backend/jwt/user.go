@@ -2,16 +2,20 @@ package jwt
 
 import (
 	"chat/domain"
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 func Encode(user domain.User) (string, time.Time, error) {
+	fmt.Println("encode ", user)
+	expirationTime := time.Now().Add(5 * time.Hour)
 
-	expirationTime := time.Now().Add(5 * time.Minute)
+	fmt.Println("encode id user ", user.ID)
+
 	claims := &domain.Claims{
-		ID:    user.ID.String(),
+		ID:    user.ID,
 		Email: user.Email,
 		StandardClaims: jwt.StandardClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds

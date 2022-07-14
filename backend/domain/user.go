@@ -1,7 +1,5 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 // type User struct {
 // 	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id" `
 // 	Password string             `json:"password" bson:"password"`
@@ -9,12 +7,12 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 // 	Email string `json:"email" bson:"email"`
 // }
 type User struct {
-	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id"`
-	Email    string             `json:"email,omitempty" binding:"email,required"`
-	Name     string             `json:"name,omitempty" `
-	Password string             `json:"password,omitempty" binding:"required"`
-	Phone    string             `json:"phone,omitempty"`
-	Address  string             `json:"address,omitempty"`
+	ID       string `json:"id,omitempty" bson:"_id"`
+	Email    string `json:"email,omitempty" binding:"email,required"`
+	Name     string `json:"name,omitempty" `
+	Password string `json:"password,omitempty" binding:"required"`
+	Phone    string `json:"phone,omitempty"`
+	Address  string `json:"address,omitempty"`
 }
 
 type UserRepository interface {

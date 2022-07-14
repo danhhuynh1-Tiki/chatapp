@@ -2,7 +2,7 @@ package repository
 
 import (
 	"chat/domain"
-	"fmt"
+	// "fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,8 +53,8 @@ func (u *userRepository) GetUser(user domain.User) (*domain.User, error) {
 
 	err := userc.FindOne(ctx, bson.M{"email": user.Email, "password": user.Password}).Decode(&users)
 
-	fmt.Println(user)
-	fmt.Println(users)
+	// fmt.Println(user)
+	// fmt.Println(users)
 
 	if err != nil {
 		return nil, err

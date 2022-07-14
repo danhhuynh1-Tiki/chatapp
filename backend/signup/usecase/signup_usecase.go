@@ -1,4 +1,4 @@
-package user
+package usecase
 
 import (
 	"chat/domain"
