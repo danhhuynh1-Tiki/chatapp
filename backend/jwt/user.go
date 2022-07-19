@@ -9,10 +9,9 @@ import (
 )
 
 func Encode(user domain.User) (string, time.Time, error) {
-	fmt.Println("encode ", user)
 	expirationTime := time.Now().Add(5 * time.Hour)
 
-	fmt.Println("encode id user ", user.ID)
+	fmt.Println("encode id user ", user.ID.Hex())
 
 	claims := &domain.Claims{
 		ID:    user.ID,

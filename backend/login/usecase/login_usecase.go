@@ -2,6 +2,9 @@ package usecase
 
 import (
 	"chat/domain"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type loginUsecase struct {
@@ -19,4 +22,8 @@ func (login *loginUsecase) GetUser(user domain.User) (*domain.User, error) {
 	} else {
 		return users, nil
 	}
+}
+
+func (login *loginUsecase) UpdateStatusUser(id primitive.ObjectID, request time.Time, status int) error {
+	return login.userRepo.UpdateStatusUser(id, request, status)
 }

@@ -2,10 +2,14 @@ package repository
 
 import (
 	"chat/domain"
+	"errors"
+	"fmt"
+
 	// "fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/net/context"
 )
@@ -66,6 +70,11 @@ func (u *userRepository) GetUser(user domain.User) (*domain.User, error) {
 func (u *userRepository) Create(user domain.User) (*string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
+	user.Created_At = time.Now()
+	user.Updated_At = time.Now()
+	user.Request_At = time.Now()
+	user.Status = 1
+
 	defer cancel()
 	userc := u.DB.Collection("users")
 	_, err := userc.InsertOne(ctx, bson.D{
@@ -74,6 +83,10 @@ func (u *userRepository) Create(user domain.User) (*string, error) {
 		{Key: "name", Value: user.Name},
 		{Key: "address", Value: user.Address},
 		{Key: "phone", Value: user.Phone},
+		{Key: "created_at", Value: user.Created_At},
+		{Key: "updated_at", Value: user.Updated_At},
+		{Key: "request_at", Value: user.Request_At},
+		{Key: "status", Value: user.Status},
 	})
 	if err != nil {
 		return nil, err
@@ -82,19 +95,20 @@ func (u *userRepository) Create(user domain.User) (*string, error) {
 	return &user.Email, nil
 }
 
-// func (u *userRepository) IsExisted(email string) (*domain.User, error) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+func (u *userRepository) UpdateStatusUser(id primitive.ObjectID, t time.Time, status int) error {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
-// 	defer cancel()
-// 	userc := u.DB.Collection("users")
-// 	var user domain.User
-// 	filter := bson.D{{"email", email}}
-// 	opts := options.FindOne()
-// 	err := userc.FindOne(ctx, filter, opts).Decode(&user)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &user, nil
-// }
+	userc := u.DB.Collection("users")
+	res, err := userc.UpdateOne(ctx,
+		bson.M{"_id": id}, bson.D{
+			{"$set", bson.D{
+				{"status", status},
+				{"request_at", t},
+			}},
+		})
+	fmt.Println(res.ModifiedCount)
+	if err != nil || res.ModifiedCount == 0 {
+		return errors.New("Cannot update status user")
+	}
+	return nil
+}

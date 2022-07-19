@@ -5,6 +5,7 @@ import (
 	"chat/jwt"
 	"chat/responses"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,6 +41,16 @@ func (login *LoginHanlder) CreateJwtUser(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, responses.ErrorNotFound(err))
 		return
+	}
+	// update status and time request
+	t := time.Now()
+	err = login.loginUse.UpdateStatusUser(res.ID, t, 1)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status_code": http.StatusBadRequest,
+			"message":     "Cannot update status",
+		})
 	}
 	tokenString, expirationTime, err := jwt.Encode(*res)
 

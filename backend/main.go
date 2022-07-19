@@ -2,6 +2,11 @@ package main
 
 import (
 	"chat/database"
+	"fmt"
+
+	// "fmt"
+	"time"
+
 	// user
 	userHandler "chat/user/delivery/http"
 	userRepository "chat/user/repository"
@@ -16,16 +21,13 @@ import (
 	singHandler "chat/signup/delivery/http"
 	signUsecase "chat/signup/usecase"
 
-	// Talk
-	talkHandler "chat/talk/delivery/http"
-	talkRepo "chat/talk/repository"
-	talkUsecase "chat/talk/usecase"
-
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron"
 )
 
 func main() {
 	app := useRoutes()
+	go CheckStatus()
 	app.Run()
 }
 
@@ -33,6 +35,7 @@ func useRoutes() *gin.Engine {
 	r := gin.Default()
 	api := r.Group("/mychat/v1/")
 	DB := database.GetDatabase()
+
 	// user
 	userRepo := userRepository.NewRepository(DB)
 	userUsecase := userUsecase.NewUserUsecase(userRepo)
@@ -43,10 +46,28 @@ func useRoutes() *gin.Engine {
 	// signup
 	signUsecase := signUsecase.NewSignupUsecase(userRepo)
 	singHandler.NewSignupHandler(api, signUsecase)
-	// talk
-	talkRepo := talkRepo.NewTalkRepository(DB)
-	talkUse := talkUsecase.NewTalkUsecase(talkRepo)
-	talkHandler.NewTalkHandler(api, talkUse)
+
 	return r
+
+}
+
+func CheckStatus() {
+	DB := database.GetDatabase()
+	s := gocron.NewScheduler(time.UTC)
+	userRepo := userRepository.NewRepository(DB)
+
+	s.Every(10).Seconds().Do(func() {
+		listUser := userRepo.GetAllUser()
+		for i := range listUser {
+			if time.Now().UTC().Unix()-listUser[i].Request_At.Unix() > 5 {
+				err := userRepo.UpdateStatusUser(listUser[i].ID, listUser[i].Request_At, 0)
+				if err != nil {
+					fmt.Println("Cannot update status", listUser[i].ID)
+				}
+			}
+		}
+	})
+
+	s.StartBlocking()
 
 }
