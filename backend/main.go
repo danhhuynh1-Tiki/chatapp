@@ -62,7 +62,7 @@ func CheckStatus() {
 			if time.Now().UTC().Unix()-listUser[i].Request_At.Unix() > 5 {
 				err := userRepo.UpdateStatusUser(listUser[i].ID, listUser[i].Request_At, 0)
 				if err != nil {
-					fmt.Println("Cannot update status", listUser[i].ID)
+					fmt.Println("Can change data", listUser[i].ID)
 				}
 			}
 		}
