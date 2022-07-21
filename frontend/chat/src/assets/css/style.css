@@ -1,0 +1,13 @@
+.User{
+    margin-bottom: 10px;
+}
+.Userchat{
+    margin-bottom: 5px;
+}
+.Userchat:hover{
+    background-color: gray;
+}
+.sidebar{
+    background-color: white;
+    width: 30% !important;
+}
