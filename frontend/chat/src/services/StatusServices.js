@@ -1,4 +1,5 @@
 const CallStatusApi = async () =>{
+    
     try{
         const response = await axios.Get("")
         console.log(response.data)
@@ -7,3 +8,5 @@ const CallStatusApi = async () =>{
         console.log(error)
     }
 }
+
+export default CallStatusApi;

@@ -1,11 +1,15 @@
 .User{
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
 }
 .Userchat{
+    margin-top: 5px;
     margin-bottom: 5px;
 }
+.GroupChat:hover{
+    background-color: #f5f6fa;
+}
 .Userchat:hover{
-    background-color: gray;
+    background-color: #f5f6fa;
 }
 .sidebar{
     background-color: white;
