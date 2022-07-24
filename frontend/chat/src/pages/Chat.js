@@ -8,7 +8,7 @@ const Chat = () => {
     return (
         <>
             <Layout style={{ height: '100vh' }}>
-                <Row>
+                <Row style={{height: '100vh'}}>
                     <Col span={6} style={{backgroundColor:'white'}}>
                         <Sidebar />
                     </Col>
