@@ -23,6 +23,9 @@ const LoadMore = () => {
         console.log("load more group chat")
    }
 }
+const Memebers = () => {
+    console.log("Memeber")
+}
 const Sidebar = () => {
     return (
         <>
@@ -34,7 +37,7 @@ const Sidebar = () => {
             <Row style={{height : '80vh'}}>
                 <Col span={24}>
                     <Tabs defaultActiveKey="1" onChange={Message} centered>
-                        <TabPane tab="Members" key="1" >
+                        <TabPane tab="Members" key="1" onClick={Memebers}>
                             <Chatuser/>
                         </TabPane>
                         <TabPane tab="Groups" key="2">

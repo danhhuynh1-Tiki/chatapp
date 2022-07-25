@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Avatar,Button,Badge} from 'antd';
+import { Row, Col, Avatar,Button} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 const styleGroup ={
