@@ -2,6 +2,9 @@ package main
 
 import (
 	"chat/pkg/cron"
+	userDelivery "chat/services/domain/user/delivery/http"
+	userUC "chat/services/domain/user/usecase"
+	repository "chat/services/repository"
 	"context"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -11,15 +14,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"log"
-	"time"
-
-	userDelivery "chat/services/domain/user/delivery/http"
-	userUC "chat/services/domain/user/usecase"
-	repository "chat/services/repository"
 
 	"chat/pkg/config"
 	authDelivery "chat/services/domain/auth/delivery/http"
 	authUC "chat/services/domain/auth/usecase"
+
+	roomDelivery "chat/services/domain/room/delivery/http"
+	roomUC "chat/services/domain/room/usecase"
+
+	messageDelivery "chat/services/domain/message/delivery/http"
+	messageUC "chat/services/domain/message/usecase"
 )
 
 var (
@@ -37,6 +41,16 @@ var (
 	authUseCase    authUC.AuthUseCase
 	authHandler    authDelivery.AuthHandler
 	authRouter     authDelivery.AuthRouter
+
+	roomRepository repository.RoomRepository
+	roomUseCase    roomUC.RoomUsecase
+	roomHandler    roomDelivery.RoomHandler
+	roomRouter     roomDelivery.RoomRouter
+
+	messageRepository repository.MessageRepository
+	messageUseCase    messageUC.MessageUseCase
+	messageHandler    messageDelivery.MessageHandler
+	messageRouter     messageDelivery.MessageRouter
 )
 
 func init() {
@@ -78,6 +92,8 @@ func init() {
 	fmt.Println("Redis client connected successfully...")
 
 	userCollection := mongoClient.Database("chat").Collection("users")
+	roomCollection := mongoClient.Database("chat").Collection("room")
+	messageCollection := mongoClient.Database("chat").Collection("message")
 
 	userRepository = repository.NewUserRepository(ctx, userCollection)
 	go cron.CronStatus(userRepository)
@@ -90,6 +106,15 @@ func init() {
 	authHandler = authDelivery.NewAuthHandler(authUseCase, userUseCase)
 	authRouter = authDelivery.NewAuthRouter(authHandler)
 
+	roomRepository = repository.NewRoomRepository(ctx, roomCollection)
+	roomUseCase = roomUC.NewRoomUsecase(roomRepository)
+	roomHandler = roomDelivery.NewRoomHandler(roomUseCase)
+	roomRouter = roomDelivery.NewRoomRouter(roomHandler)
+
+	messageRepository = repository.NewMessageRepository(ctx, messageCollection)
+	messageUseCase = messageUC.NewMessageUseCase(messageRepository, userRepository)
+	messageHandler = messageDelivery.NewMessageHandler(messageUseCase)
+	messageRouter = messageDelivery.NewRoomMessageRouter(messageHandler)
 	server = gin.Default()
 }
 
@@ -117,19 +142,21 @@ func main() {
 	server.Use(cors.New(corsConfig))
 
 	router := server.Group("/api")
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	//router.Use(cors.New(cors.Config{
+	//	AllowOrigins:     []string{"*"},
+	//	AllowCredentials: true,
+	//	AllowOriginFunc: func(origin string) bool {
+	//		return origin == "https://github.com"
+	//	},
+	//	MaxAge: 300 * time.Hour,
+	//}))
 	//router.GET("/healthchecker", func(ctx *gin.Context) {
 	//	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": value})
 	//})
 
 	authRouter.AuthRoute(router, userUseCase)
 	userRouter.UserRoute(router, userUseCase)
+	roomRouter.RoomRoute(router, userUseCase)
+	messageRouter.MessageRoute(router, userUseCase)
 	log.Fatal(server.Run(":" + config.Port))
 }

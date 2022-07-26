@@ -14,6 +14,7 @@ type UserUseCase interface {
 	GetAll() ([]models.DBResponse, error)
 	UpdateStatus(primitive.ObjectID, int) error
 	FilterUser(primitive.ObjectID, int64) ([]models.DBResponse, error)
+	GetUser(primitive.ObjectID) (models.DBResponse, error)
 }
 
 type userUseCase struct {
@@ -69,4 +70,8 @@ func (usecase *userUseCase) UpdateStatus(id primitive.ObjectID, status int) erro
 
 func (usecase *userUseCase) FilterUser(id primitive.ObjectID, c int64) ([]models.DBResponse, error) {
 	return usecase.repository.FilterUser(id, c)
+}
+
+func (usecase *userUseCase) GetUser(id primitive.ObjectID) (models.DBResponse, error) {
+	return usecase.repository.GetUser(id)
 }

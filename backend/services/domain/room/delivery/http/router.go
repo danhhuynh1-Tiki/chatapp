@@ -1,6 +1,11 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	middleware "chat/pkg/middleware"
+	//"chat/services/domain/room/usecase"
+	usecase "chat/services/domain/user/usecase"
+	"github.com/gin-gonic/gin"
+)
 
 type RoomRouter struct {
 	roomHandler RoomHandler
@@ -9,8 +14,9 @@ type RoomRouter struct {
 func NewRoomRouter(roomHandler RoomHandler) RoomRouter {
 	return RoomRouter{roomHandler}
 }
-func (r *RoomRouter) RoomRoute(rg *gin.RouterGroup) {
+func (r *RoomRouter) RoomRoute(rg *gin.RouterGroup, userUseCase usecase.UserUseCase) {
 	router := rg.Group("/room")
+	router.Use(middleware.DeserializeUser(userUseCase))
 	router.GET("/:id", r.roomHandler.CreateRoom)
 	router.POST("/", r.roomHandler.CreateGroup)
 

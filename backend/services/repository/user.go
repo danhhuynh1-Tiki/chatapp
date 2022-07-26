@@ -17,6 +17,7 @@ type UserRepository interface {
 	GetAll(primitive.M) ([]models.DBResponse, error)
 	UpdateStatus(primitive.M, int) error
 	FilterUser(primitive.ObjectID, int64) ([]models.DBResponse, error)
+	GetUser(id primitive.ObjectID) (models.DBResponse, error)
 }
 
 type userRepository struct {
@@ -88,4 +89,15 @@ func (repository *userRepository) FilterUser(id primitive.ObjectID, c int64) ([]
 		filter = append(filter, user)
 	}
 	return filter, nil
+}
+
+func (u *userRepository) GetUser(id primitive.ObjectID) (models.DBResponse, error) {
+	var user models.DBResponse
+	err := u.collection.FindOne(u.context, bson.M{
+		"_id": id,
+	}).Decode(&user)
+	if err != nil {
+		return models.DBResponse{}, nil
+	}
+	return user, nil
 }

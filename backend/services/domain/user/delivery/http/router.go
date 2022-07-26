@@ -18,7 +18,7 @@ func NewUserRouter(userHandler UserHandler) UserRouter {
 func (uc *UserRouter) UserRoute(rg *gin.RouterGroup, userUseCase usecase.UserUseCase) {
 	router := rg.Group("users")
 	router.Use(middleware.DeserializeUser(userUseCase))
-	router.GET("/me", uc.userHandler.GetMe)
+	router.GET("/me", uc.userHandler.GetUser)
 	//router.GET("/", uc.userHandler.GetAll)
 	router.GET("/", uc.userHandler.FilterUser)
 }

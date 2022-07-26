@@ -31,7 +31,30 @@ func (handler *UserHandler) GetMe(c *gin.Context) {
 		"data":   gin.H{"user": filter.FilteredResponse(currentUser)},
 	})
 }
+
+func (hanlder *UserHandler) GetUser(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
+	cookie, _ := c.Cookie("access_token")
+	config, _ := config.LoadConfig(".")
+	id, _ := utils.ValidateToken(cookie, config.AccessTokenPublicKey)
+	user_id, _ := primitive.ObjectIDFromHex(fmt.Sprint(id))
+
+	user, err := hanlder.usecase.GetUser(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Cannot get user data",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"email": user.Email,
+	})
+
+}
+
 func (handler *UserHandler) GetAll(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	listUser, err := handler.usecase.GetAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -44,6 +67,7 @@ func (handler *UserHandler) GetAll(c *gin.Context) {
 	})
 }
 func (handler *UserHandler) FilterUser(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	str := c.Query("size")
 	cookie, _ := c.Cookie("access_token")
 	config, _ := config.LoadConfig(".")
