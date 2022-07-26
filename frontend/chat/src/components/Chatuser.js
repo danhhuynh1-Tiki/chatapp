@@ -1,17 +1,21 @@
 import Userchat from './user/Userchat';
 import { Row , Col } from 'antd';
 import React, {useState,useEffect} from  'react';
-import UsersService from '../services/UsersService';
-
+import { CallUsersApi } from '../services/UsersService';
+import { useNavigate } from 'react-router-dom';
 const Chatuser =  () => {
     const [users,setUsers] = useState([])
-
+    let navigate = useNavigate()
     useEffect( () => {
         const fetchData = async () => {
-            const response = await UsersService()
-            setUsers(response.data)
+            const response = await CallUsersApi()
+            if (response === undefined){
+                navigate("/login")
+            }else{
+                setUsers(response.data)
+            }
         }
-        const interval = setInterval(fetchData(),1000)
+        const interval = setInterval(fetchData(),5000)
         return () => clearInterval(interval);
     },[users])
     const listUserChat = users.map((user) => 

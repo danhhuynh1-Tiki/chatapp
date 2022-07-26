@@ -1,13 +1,33 @@
+
 import axios from "axios"
 
 const CallUsersApi = async () => {
     try{
 
-        const response = await axios.get("http://localhost:8080/mychat/v1/users")
+        const response = await axios.get("http://localhost:8080/api/users?size=2")
+        // console.log(response.data)
         return response.data
     }catch(error){
-        alert(error)
+        console.log("loi ne",error)
     }
 }
 
-export default CallUsersApi;
+const LogoutUsersApi = async () => {
+    try{
+        const response = await axios.get("http://localhost:8080/api/auth/logout")
+        return response.data
+    }catch(error){
+        console.log("loi ne",error)
+    }
+} 
+const GetUserApi = async () => {
+    try{
+        const response = await axios.get("http://localhost:8080/api/users/me")
+        console.log(response.data)
+        return response.data
+    }catch(error){
+        console.log("loi ne",error)
+    }
+}
+
+export { CallUsersApi, LogoutUsersApi , GetUserApi};
