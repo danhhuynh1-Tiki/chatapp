@@ -3,6 +3,7 @@ import {Row,Col,Avatar,Button, Space} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { LogoutUsersApi,GetUserApi} from '../../services/UsersService';
 import { useNavigate } from 'react-router-dom';
+import { EmailUser } from '../../redux/UserRedux';
 const User = () =>{
     const [user,userData] = useState({})
     let navigate = useNavigate()
@@ -13,7 +14,9 @@ const User = () =>{
                 if(response === undefined){
                     navigate("/login")
                 }else{
+                    EmailUser.dispatch({type:'',email : response.email})
                     userData(response)
+                    console.log("Email user",EmailUser.getState().email)
                 }
             }
             fetchData()

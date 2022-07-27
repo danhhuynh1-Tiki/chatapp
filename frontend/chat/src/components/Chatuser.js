@@ -9,13 +9,15 @@ const Chatuser =  () => {
     useEffect( () => {
         const fetchData = async () => {
             const response = await CallUsersApi()
+            // console.log("user chat user",response)
             if (response === undefined){
                 navigate("/login")
             }else{
+                // console.log(response)
                 setUsers(response.data)
             }
         }
-        const interval = setInterval(fetchData(),5000)
+        let interval = setInterval(fetchData(),5000)
         return () => clearInterval(interval);
     },[users])
     const listUserChat = users.map((user) => 

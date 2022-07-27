@@ -4,7 +4,7 @@ import axios from "axios"
 const CallUsersApi = async () => {
     try{
 
-        const response = await axios.get("http://localhost:8080/api/users?size=2")
+        const response = await axios.get("http://localhost:8080/api/users?size=10")
         // console.log(response.data)
         return response.data
     }catch(error){
