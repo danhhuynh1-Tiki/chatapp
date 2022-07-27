@@ -19,6 +19,20 @@ func NewMessageHandler(messageUseCase usecase.MessageUseCase) MessageHandler {
 	return MessageHandler{messageUseCase: messageUseCase}
 }
 
+func (m *MessageHandler) GetMessage(c *gin.Context) {
+	room_id, _ := primitive.ObjectIDFromHex(c.Param("room_id"))
+
+	roomM, err := m.messageUseCase.GetMessage(room_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Cannot get message",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, roomM)
+
+}
+
 func (m *MessageHandler) AddMessage(c *gin.Context) {
 	room_id := c.Param("room_id")
 	Room_id, _ := primitive.ObjectIDFromHex(room_id)
@@ -50,7 +64,5 @@ func (m *MessageHandler) AddMessage(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": roomMessage,
-	})
+	c.JSON(http.StatusOK, roomMessage)
 }

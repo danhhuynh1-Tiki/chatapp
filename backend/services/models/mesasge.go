@@ -11,5 +11,5 @@ type Message struct {
 type RoomMessage struct {
 	//ID       primitive.ObjectID `json:"id"`
 	RoomID   primitive.ObjectID `json:"room_id" bson:"room_id"`
-	Messages []Message
+	Messages []Message          `json:"messages" bson:"messages"`
 }

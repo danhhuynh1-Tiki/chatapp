@@ -10,6 +10,7 @@ import (
 
 type MessageUseCase interface {
 	AddMessage(primitive.ObjectID, models.Message) (*models.RoomMessage, error)
+	GetMessage(primitive.ObjectID) (*models.RoomMessage, error)
 }
 
 type messageUseCase struct {
@@ -19,6 +20,10 @@ type messageUseCase struct {
 
 func NewMessageUseCase(messageRepo repository.MessageRepository, userRepo repository.UserRepository) MessageUseCase {
 	return &messageUseCase{messageRepo, userRepo}
+}
+func (m *messageUseCase) GetMessage(room_id primitive.ObjectID) (*models.RoomMessage, error) {
+	return m.messageRepo.GetMessage(room_id)
+
 }
 func (m *messageUseCase) AddMessage(room_id primitive.ObjectID, message models.Message) (*models.RoomMessage, error) {
 	fmt.Println(message.UserID)

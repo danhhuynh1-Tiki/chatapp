@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"chat/services/models"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,7 +11,7 @@ import (
 
 type RoomRepository interface {
 	CreateRoom(primitive.ObjectID, primitive.ObjectID) (string, error)
-	GetRoom() error
+	GetRoom(primitive.ObjectID, primitive.ObjectID) (string, error)
 }
 type roomRepository struct {
 	context    context.Context
@@ -24,7 +25,18 @@ func NewRoomRepository(context context.Context, collection *mongo.Collection) Ro
 }
 
 func (r *roomRepository) CreateRoom(id primitive.ObjectID, id1 primitive.ObjectID) (string, error) {
-	//r1 := models.Room{}
+	fmt.Println(id, id1)
+	room_id, err := r.GetRoom(id, id1)
+	//fmt.Println("room_id", room_id)
+	if err == nil {
+		return room_id, nil
+	}
+	room_id1, err := r.GetRoom(id1, id)
+	//fmt.Println("room_id1", room_id1)
+	if err == nil {
+		return room_id1, nil
+	}
+
 	res, err := r.collection.InsertOne(r.context, bson.D{
 		{"name", ""},
 	})
@@ -32,26 +44,34 @@ func (r *roomRepository) CreateRoom(id primitive.ObjectID, id1 primitive.ObjectI
 	if err != nil {
 		return "", err
 	}
-	room_id := res.InsertedID
-	// insert two document into collection room
-	docs := []interface{}{
-		bson.D{{"room_id", room_id}, {"user_id", id}},
-		bson.D{{"room_id", room_id}, {"user_id", id1}},
-	}
-	//opts := options.InsertMany().SetOrdered(false)
-	result, err := r.collection.InsertMany(r.context, docs)
+	roomid := res.InsertedID
+
+	result, err := r.collection.InsertOne(r.context, bson.D{
+		{"room_id", roomid},
+		{"user_id1", id},
+		{"user_id2", id1},
+	})
 
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(result.InsertedIDs)
+	fmt.Println("", result.InsertedID)
 	//fmt.Println(res.InsertedID.(primitive.ObjectID).Hex())
-	return "", nil
+	return roomid.(primitive.ObjectID).Hex(), nil
 
 }
 func (r *roomRepository) CreateGroup() error {
 	return nil
 }
-func (r *roomRepository) GetRoom() error {
-	return nil
+func (r *roomRepository) GetRoom(id, id1 primitive.ObjectID) (string, error) {
+	var roomM models.RoomMembers
+	err := r.collection.FindOne(r.context, bson.D{
+		{"user_id1", id},
+		{"user_id2", id1},
+	}).Decode(&roomM)
+
+	if err != nil {
+		return "", err
+	}
+	return roomM.RoomId.Hex(), err
 }

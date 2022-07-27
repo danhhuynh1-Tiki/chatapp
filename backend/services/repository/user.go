@@ -16,7 +16,7 @@ type UserRepository interface {
 	FindByQuery(primitive.M) (*models.DBResponse, error)
 	GetAll(primitive.M) ([]models.DBResponse, error)
 	UpdateStatus(primitive.M, int) error
-	FilterUser(primitive.ObjectID, int64) ([]models.DBResponse, error)
+	FilterUser(primitive.ObjectID, int64) ([]models.UserResponse, error)
 	GetUser(id primitive.ObjectID) (models.DBResponse, error)
 }
 
@@ -71,7 +71,7 @@ func (repository *userRepository) UpdateStatus(query primitive.M, status int) er
 }
 
 // pagination users
-func (repository *userRepository) FilterUser(id primitive.ObjectID, c int64) ([]models.DBResponse, error) {
+func (repository *userRepository) FilterUser(id primitive.ObjectID, c int64) ([]models.UserResponse, error) {
 	option := options.Find()
 	option.SetLimit(c)
 
@@ -81,9 +81,9 @@ func (repository *userRepository) FilterUser(id primitive.ObjectID, c int64) ([]
 	if err != nil {
 		return nil, err
 	}
-	var filter []models.DBResponse
+	var filter []models.UserResponse
 	for cursor.Next(repository.context) {
-		var user models.DBResponse
+		var user models.UserResponse
 		cursor.Decode(&user)
 
 		filter = append(filter, user)

@@ -13,6 +13,7 @@ import (
 type MessageRepository interface {
 	AddMessage(primitive.ObjectID, primitive.ObjectID, string, string) (*models.RoomMessage, error)
 	FindRoomMessage(primitive.ObjectID) (*models.RoomMessage, error)
+	GetMessage(primitive.ObjectID) (*models.RoomMessage, error)
 }
 
 type messageRepository struct {
@@ -23,7 +24,22 @@ type messageRepository struct {
 func NewMessageRepository(context context.Context, collection *mongo.Collection) MessageRepository {
 	return &messageRepository{context, collection}
 }
+func (m *messageRepository) GetMessage(room_id primitive.ObjectID) (*models.RoomMessage, error) {
+	roomM, err := m.FindRoomMessage(room_id)
+	if err != nil {
+		roomM = &models.RoomMessage{RoomID: room_id, Messages: []models.Message{}}
+		//fmt.Println(*roomM)
+		_, err := m.collection.InsertOne(m.context, *roomM)
 
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println(*roomM)
+		return roomM, nil
+	} else {
+		return roomM, nil
+	}
+}
 func (m *messageRepository) AddMessage(room_id, user_id primitive.ObjectID, email string, content string) (*models.RoomMessage, error) {
 	roomM, err := m.FindRoomMessage(room_id)
 	fmt.Println("Room message repository", roomM)
@@ -55,7 +71,7 @@ func (m *messageRepository) AddMessage(room_id, user_id primitive.ObjectID, emai
 			return roomM, nil
 		}
 	}
-	return nil, nil
+	//return nil, nil
 }
 
 func (m *messageRepository) FindRoomMessage(room_id primitive.ObjectID) (*models.RoomMessage, error) {

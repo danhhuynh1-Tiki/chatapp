@@ -13,7 +13,7 @@ type UserUseCase interface {
 	FindByEmail(string) (*models.DBResponse, error)
 	GetAll() ([]models.DBResponse, error)
 	UpdateStatus(primitive.ObjectID, int) error
-	FilterUser(primitive.ObjectID, int64) ([]models.DBResponse, error)
+	FilterUser(primitive.ObjectID, int64) ([]models.UserResponse, error)
 	GetUser(primitive.ObjectID) (models.DBResponse, error)
 }
 
@@ -68,7 +68,7 @@ func (usecase *userUseCase) UpdateStatus(id primitive.ObjectID, status int) erro
 	return err
 }
 
-func (usecase *userUseCase) FilterUser(id primitive.ObjectID, c int64) ([]models.DBResponse, error) {
+func (usecase *userUseCase) FilterUser(id primitive.ObjectID, c int64) ([]models.UserResponse, error) {
 	return usecase.repository.FilterUser(id, c)
 }
 

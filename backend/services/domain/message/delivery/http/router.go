@@ -16,4 +16,5 @@ func NewRoomMessageRouter(messageHandler MessageHandler) MessageRouter {
 func (m MessageRouter) MessageRoute(rg *gin.RouterGroup, userUseCase usecase.UserUseCase) {
 	router := rg.Group("/message")
 	router.POST("/:room_id", m.messageHandler.AddMessage)
+	router.GET("/:room_id", m.messageHandler.GetMessage)
 }
