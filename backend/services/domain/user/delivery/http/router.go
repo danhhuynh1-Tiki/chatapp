@@ -21,4 +21,5 @@ func (uc *UserRouter) UserRoute(rg *gin.RouterGroup, userUseCase usecase.UserUse
 	router.GET("/me", uc.userHandler.GetUser)
 	//router.GET("/", uc.userHandler.GetAll)
 	router.GET("/", uc.userHandler.FilterUser)
+
 }

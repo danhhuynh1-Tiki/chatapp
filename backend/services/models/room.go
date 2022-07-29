@@ -16,9 +16,13 @@ type RoomMembers struct {
 }
 
 //create group chat
-
-type GroupMemebrs struct {
+type Group struct {
+	Name    string         `json:"name" bson:"name"`
+	Members []GroupMembers `json:"members" bson:"members"`
+}
+type GroupMembers struct {
 	ID     primitive.ObjectID `json:"id" bson:"_id"`
+	Name   string             `json:"name" bson:"name"`
 	RoomID primitive.ObjectID `json:"room_id" bson:"room_id"`
-	Email  primitive.ObjectID `json:"room_id" bson`
+	Email  string             `json:"email" bson:"email" binding:"required"`
 }

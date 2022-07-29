@@ -8,17 +8,19 @@ import { RoomID } from '../redux/RoomRedux';
 // import { EmailUser } from '../redux/UserRedux';
 import { useNavigate } from 'react-router-dom';
 import { EmailUser } from '../redux/UserRedux';
+import { useInterval } from 'react-use';
+
+
 const message = () =>{
-    let content = ""
+
+    const [content, setContent] = useState("")
     
     const [messages,SetMessage] = useState([])
     
     const navigate = useNavigate()
     
     const getContent = (e) => {
-        console.log(e.target.value)
-        content = e.target.value
-
+        setContent(e.target.value)
     }
     // Send Message with post and update in redux
     const SendMessage = async () =>{
@@ -28,40 +30,39 @@ const message = () =>{
         console.log("add mesasge res",response)
         // DataMessage.dispatch({type:'',room_id :response.room_id,messages : response.messages})
     }
+    const SetSizeMessage =  () => {
 
-    const CallMessageApi = async () => {
-            const response = await GetMessage("62e107b7d9b48f3b9e4ceb8e")
-            console.log(response.room_id)
         
     }
+    const featchData = async () => {
+        const response = await  GetMessage(RoomID.getState().id)
+        if(response === undefined){
 
-    useEffect( () => {
-        const fetchData = async () => {
-            const response = await GetMessage(RoomID.getState().id)
-            // console.log("user chat user",response)
-            if (response === undefined){
-                console.log(response)
-                console.log("cannot get message data")
-                // navigate("/login")
-            }else{
-                console.log(response)
-                SetMessage([])
-            }
+        } else{
+            // console.log(response)
+            SetMessage(response.messages)
         }
-        let interval = setInterval(fetchData(),5000)
-        return () => clearInterval(interval);
-    },[messages])
+    }
+    useInterval(featchData,1000)
+    let listMessage = messages.map((m) => {
+        
+        if(m.email == EmailUser.getState().email){
+            return <Usermessage message={m} />
+        }else{
+            return <Message message={m} />
+        }
+    })
 
     return (
         <>
                 <Row style={{textAlign : 'center'}}>
                     <Col span={24}>
-                        <Button onClick={CallMessageApi}>Load More</Button>
+                        <Button onClick={SetSizeMessage} >Load More</Button>
                     </Col>
                 </Row>
                 <Row style={{height : '85vh',overflow:'scroll'}}>
                     <Col span={24}>
-                           {/* {listMessage} */}
+                           {listMessage}
                     </Col>
                 </Row>
 

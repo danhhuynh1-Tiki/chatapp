@@ -19,7 +19,7 @@ const GetMessage = async (room_id) => {
         // console.log(`http://localhost:8080/api/message/${room_id}`)
         try{
             const response = await axios.get(`http://localhost:8080/api/message/${room_id}`)
-            console.log("message from api",response.data)
+            // console.log("message from api",response.data)
             return response.data
         }catch(error){
             console.log("loi ne",error)

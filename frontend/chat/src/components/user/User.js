@@ -33,7 +33,7 @@ const User = () =>{
                 </Col>
                 <Col span={10}>
                     <Space align="center">
-                        <p style={{size:'1px'}}>{user.email}</p>
+                        <p>{user.email}</p>
                    </Space>
                 </Col>
                 <Col span={8}>

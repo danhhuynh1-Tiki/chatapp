@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col, Avatar,Button} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { RoomID } from '../../redux/RoomRedux';
 
 const styleGroup ={
     marginTop : '5px',
@@ -8,10 +9,12 @@ const styleGroup ={
     borderRadius : '3px 3px'
 }
 
-const ChatGroup = () => {
-    console.log("chat group")
-}
-const Groupmessage = () => {
+
+const Groupmessage = (props) => {
+    const ChatGroup = () => {
+        RoomID.dispatch({type:'',room_id:props.group.room_id})
+        console.log(RoomID.getState().id)
+    }
     return (
             <>
              <Row style={styleGroup} className="GroupChat" onClick={ChatGroup}>
@@ -24,7 +27,7 @@ const Groupmessage = () => {
                 </span>
                 </Col>
                 <Col span={10}>
-                   <h7>Chem gio</h7>
+                   <h7>{props.group.name}</h7>
                 </Col>
                 <Col span={9}>
                 <Button type="danger"></Button>

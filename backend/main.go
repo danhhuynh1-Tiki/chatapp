@@ -107,7 +107,7 @@ func init() {
 	authRouter = authDelivery.NewAuthRouter(authHandler)
 
 	roomRepository = repository.NewRoomRepository(ctx, roomCollection)
-	roomUseCase = roomUC.NewRoomUsecase(roomRepository)
+	roomUseCase = roomUC.NewRoomUsecase(roomRepository, userRepository)
 	roomHandler = roomDelivery.NewRoomHandler(roomUseCase)
 	roomRouter = roomDelivery.NewRoomRouter(roomHandler)
 
@@ -136,7 +136,7 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:8000", "http://localhost:3000"}
+	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))

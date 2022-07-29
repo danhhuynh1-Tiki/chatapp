@@ -18,6 +18,7 @@ func (r *RoomRouter) RoomRoute(rg *gin.RouterGroup, userUseCase usecase.UserUseC
 	router := rg.Group("/room")
 	router.Use(middleware.DeserializeUser(userUseCase))
 	router.GET("/:id", r.roomHandler.CreateRoom)
+	// Create Group
 	router.POST("/", r.roomHandler.CreateGroup)
-
+	router.GET("/group/:email", r.roomHandler.GetGroup)
 }
