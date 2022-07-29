@@ -1,9 +1,9 @@
 package http
 
 import (
+	middleware "chat/pkg/middleware"
 	"github.com/gin-gonic/gin"
 
-	middleware "chat/pkg/middleware"
 	usecase "chat/services/domain/user/usecase"
 )
 

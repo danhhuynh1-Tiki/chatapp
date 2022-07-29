@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -97,7 +98,11 @@ func (handler *AuthHandler) SignInUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
-
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:    "access_token",
+		Value:   access_token,
+		Expires: time.Now().Add(5 * time.Minute),
+	})
 	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60, "/", "", false, true)
 	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60, "/", "", false, true)
 	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "", false, false)

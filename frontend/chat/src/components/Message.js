@@ -55,6 +55,7 @@ const message = () =>{
 
     return (
         <>
+            
                 <Row style={{textAlign : 'center'}}>
                     <Col span={24}>
                         <Button onClick={SetSizeMessage} >Load More</Button>

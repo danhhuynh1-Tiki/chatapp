@@ -31,7 +31,7 @@ const Chatgroup = () => {
     const handleOk = async () => {
         // console.log(name)
         // console.log(email+"," + EmailUser.getState().email)
-        const response = await CallCreateGroup(name,email+","+EmailUser.getState().email)
+        const response = await CallCreateGroup(name,EmailUser.getState().email,email+","+EmailUser.getState().email)
         if(response === undefined){
             alert("cannot create group")
         }else{
@@ -57,7 +57,10 @@ const Chatgroup = () => {
     }
 
     useInterval(fetchData,1000)
-    let listGroup = group.map((g) => <Groupchat group={g} />)
+    let listGroup
+    if(group != undefined){
+        listGroup = group.map((g) => <Groupchat group={g} />)
+    }
     return (
         <>
             <Row style={{textAlign:'center',marginBottom : '1px'}}>

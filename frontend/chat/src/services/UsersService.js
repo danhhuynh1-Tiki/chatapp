@@ -5,7 +5,7 @@ const CallUsersApi = async () => {
     try{
 
         const response = await axios.get("http://localhost:8080/api/users?size=10")
-        // console.log(response.data)
+        // console.log("response login user",response)
         return response.data
     }catch(error){
         console.log("loi ne",error)

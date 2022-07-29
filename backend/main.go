@@ -136,8 +136,17 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"*"}
+	corsConfig.AllowAllOrigins = true
 	corsConfig.AllowCredentials = true
+	corsConfig.AllowHeaders = []string{
+		"*",
+		"Origin",
+		"Content-Length",
+		"Content-Type",
+		"Authorization",
+		"X-Access-Token",
+		"X-Google-Access-Token",
+	}
 
 	server.Use(cors.New(corsConfig))
 

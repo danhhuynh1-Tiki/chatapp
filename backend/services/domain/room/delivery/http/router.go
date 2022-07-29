@@ -21,4 +21,7 @@ func (r *RoomRouter) RoomRoute(rg *gin.RouterGroup, userUseCase usecase.UserUseC
 	// Create Group
 	router.POST("/", r.roomHandler.CreateGroup)
 	router.GET("/group/:email", r.roomHandler.GetGroup)
+	router.GET("/group/members/:id", r.roomHandler.GetMembers)
+	router.POST("/group/members/:id/:email", r.roomHandler.AddMember)
+	router.DELETE("/group/members/:id/:email", r.roomHandler.RemoveMember)
 }

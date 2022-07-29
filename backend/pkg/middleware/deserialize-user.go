@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"chat/pkg/config"
-	"chat/services/domain/user/usecase"
 	"chat/pkg/utils"
+	"chat/services/domain/user/usecase"
+	"github.com/gin-gonic/gin"
 )
 
 func DeserializeUser(userUseCase usecase.UserUseCase) gin.HandlerFunc {
@@ -18,7 +18,7 @@ func DeserializeUser(userUseCase usecase.UserUseCase) gin.HandlerFunc {
 
 		authorizationHeader := c.Request.Header.Get("Authorization")
 		fields := strings.Fields(authorizationHeader)
-
+		fmt.Println("author", fields)
 		if len(fields) != 0 && fields[0] == "Bearer" {
 			access_token = fields[1]
 		} else if err == nil {
@@ -26,6 +26,7 @@ func DeserializeUser(userUseCase usecase.UserUseCase) gin.HandlerFunc {
 		}
 
 		if access_token == "" {
+			fmt.Println("3")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "You are not logged in"})
 			return
 		}
@@ -33,12 +34,14 @@ func DeserializeUser(userUseCase usecase.UserUseCase) gin.HandlerFunc {
 		config, _ := config.LoadConfig(".")
 		sub, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
 		if err != nil {
+			fmt.Println("2")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
 		user, err := userUseCase.FindById(fmt.Sprint(sub))
 		if err != nil {
+			fmt.Println("1")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
 			return
 		}

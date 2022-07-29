@@ -9,9 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	filter "chat/pkg/filter"
 	"chat/pkg/utils"
-	"chat/services/models"
 )
 
 type UserHandler struct {
@@ -24,16 +22,7 @@ func NewUserHandler(handler usecase.UserUseCase) UserHandler {
 	}
 }
 
-func (handler *UserHandler) GetMe(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(*models.DBResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"data":   gin.H{"user": filter.FilteredResponse(currentUser)},
-	})
-}
-
 func (hanlder *UserHandler) GetUser(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 
 	cookie, _ := c.Cookie("access_token")
 	config, _ := config.LoadConfig(".")
@@ -54,7 +43,7 @@ func (hanlder *UserHandler) GetUser(c *gin.Context) {
 }
 
 func (handler *UserHandler) GetAll(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
 	listUser, err := handler.usecase.GetAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -67,7 +56,7 @@ func (handler *UserHandler) GetAll(c *gin.Context) {
 	})
 }
 func (handler *UserHandler) FilterUser(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+
 	str := c.Query("size")
 	cookie, _ := c.Cookie("access_token")
 	config, _ := config.LoadConfig(".")

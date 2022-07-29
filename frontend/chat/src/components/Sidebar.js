@@ -4,15 +4,17 @@ import { Row, Col, Button,Tabs } from 'antd';
 import Chatuser from '../components/Chatuser';
 import Chatgroup from '../components/Chatgroup';
 import '../assets/css/style.css';
+import { KeyRoom } from '../redux/RoomRedux';
 
 const { TabPane } = Tabs
 let key = "1"
 const Message = (key) => {
     if( key === "1" || key === ""){
-        
+        KeyRoom.dispatch({type:'',key:1})
         console.log("message user")
     }else{
         key = "2"
+        KeyRoom.dispatch({type:'',key:2})
         console.log("Message group")
     }
     
